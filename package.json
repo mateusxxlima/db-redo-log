@@ -1,0 +1,21 @@
+{
+  "name": "db-redo-log",
+  "version": "1.0.0",
+  "description": "Project to create a redo script, which reads a log file and do a \"redo\" in a database",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mateusxxlima/db-redo-log.git"
+  },
+  "author": "Mateus Lima <mateus.limacg@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mateusxxlima/db-redo-log/issues"
+  },
+  "homepage": "https://github.com/mateusxxlima/db-redo-log#readme"
+}
