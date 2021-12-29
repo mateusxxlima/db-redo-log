@@ -1,3 +1,9 @@
-import { readFileSync } from 'fs';
+import 'dotenv/config';
+import './model.js';
+import { database } from './db.js';
 
-console.log('Hello world')
+async function start() {
+  await database.sync()
+}
+
+start()
