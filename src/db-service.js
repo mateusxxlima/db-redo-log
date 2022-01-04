@@ -6,10 +6,14 @@ export class DBService {
 
   async loadTableToDatabase(table) {
 
-    for (const { column, id, value } of table) {  
-      const data = await this.Model.findByPk(id)
-      if (data) this.Model.update({ [column]: value }, { where: { id } })
-      else await this.Model.create({ id, [column]: value })  
+    for (const item of table) {
+      await this.insert(item);
     }
+  }
+
+  async insert({ column, id, value }) {
+    const data = await this.Model.findByPk(id);
+    if (data) this.Model.update({ [column]: value }, { where: { id } });
+    else await this.Model.create({ id, [column]: value });
   }
 }
