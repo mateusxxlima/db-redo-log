@@ -12,7 +12,10 @@ export class ReadFiles {
   }
 
   readLogFile() {
-    const log = readFileSync('./log.log');
-    console.log(log)
+    const logInBuffer = readFileSync('./log.log');
+    const logData = logInBuffer.toString().split(/\n/);
+    return logData
+      .map((item) => item.trim().replace(/\r|>|</g, ''))
+      .filter((item) => item)
   }
 }

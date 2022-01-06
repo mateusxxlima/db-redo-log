@@ -4,13 +4,20 @@ import { Model } from './model.js';
 import { ReadFiles } from './read-files.js';
 import { DBService } from './db-service.js';
 
-const dbService = new DBService(Model);
-const readFiles = new ReadFiles()
+class App {
 
-async function start() {
-  await database.sync();
-  const table = readFiles.readTableFile();
-  await dbService.loadTableToDatabase(table);
+  constructor() {
+    this.dbService = new DBService(Model);
+    this.readFiles = new ReadFiles();
+  }
+
+  async start() {
+    await database.sync();
+    const table = this.readFiles.readTableFile();
+    await this.dbService.loadTableToDatabase(table);
+    const logs = this.readFiles.readLogFile();
+    await this.dbService.redo(logs);
+  }
 }
 
-start()
+new App().start();
