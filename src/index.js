@@ -1,22 +1,23 @@
 import 'dotenv/config';
+
+import { readFileSync } from 'fs';
 import { database } from './db.js';
 import { Model } from './model.js';
-import { ReadFiles } from './read-files.js';
+import { File } from './file.js';
 import { DBService } from './db-service.js';
 
 class App {
 
   constructor() {
+    this.fileInBuffer = readFileSync('file.txt');
+    this.file = new File(this.fileInBuffer);
     this.dbService = new DBService(Model);
-    this.readFiles = new ReadFiles();
   }
 
   async start() {
     await database.sync();
-    const table = this.readFiles.readTableFile();
-    await this.dbService.loadTableToDatabase(table);
-    const logs = this.readFiles.readLogFile();
-    await this.dbService.redo(logs);
+    await this.dbService.loadTableToDatabase(this.file.table);
+    await this.dbService.redo(this.file.logs);
   }
 }
 

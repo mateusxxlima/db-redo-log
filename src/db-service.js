@@ -18,9 +18,11 @@ export class DBService {
 
   async redo(logs) {
     let transactions = this.getValidTransactions(logs);
-    transactions = Object.entries(transactions);
-    transactions.reverse()
-    console.log(transactions)
+    const operations = this.getOperations(transactions)
+   
+    for (const operation of operations) {
+      await this.insert(operation)
+    }
   }
 
   getValidTransactions(logs) {
@@ -28,10 +30,8 @@ export class DBService {
     let transactionsPending = new Set();
     let startCheckpoint = false;
     const transactionList = {};
-    logs = logs.reverse()
 
     for (const item of logs) {
-      console.log(item)
 
       if (item.includes('start')) {
         if (transactionsPending.size > 0) {
@@ -75,5 +75,26 @@ export class DBService {
     }
 
     return transactionList
+  }
+
+  getOperations(transactions) {
+    transactions = Object.entries(transactions);
+    transactions.reverse();
+
+    transactions = transactions.map((transaction) => {
+      const { operations } = transaction[1];
+      return operations;
+    })
+
+    transactions = transactions.reduce((prev, current) => {
+      current.reverse();
+      return [...prev, ...current];
+    }, [])
+
+    return transactions.map((operation) => {
+      operation = operation.replace(' ', '');
+      const [, id, column, value] = operation.split(',');
+      return { id: Number(id), column, value: Number(value) };
+    })
   }
 }
