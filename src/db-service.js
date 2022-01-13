@@ -97,4 +97,14 @@ export class DBService {
       return { id: Number(id), column, value: Number(value) };
     })
   }
+
+  async finalPrint() {
+    const data = await this.Model.findAll();
+    for (const { id, A } of data) {
+      console.log(`${id},A=${A}`);
+    }
+    for (const { id, B } of data) {
+      console.log(`${id},B=${B}`);
+    }
+  }
 }

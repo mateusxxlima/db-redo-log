@@ -18,6 +18,7 @@ class App {
     await database.sync();
     await this.dbService.loadTableToDatabase(this.file.table);
     await this.dbService.redo(this.file.logs);
+    await this.dbService.finalPrint()
   }
 }
 
