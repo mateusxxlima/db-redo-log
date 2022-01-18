@@ -2,6 +2,7 @@ export class DBService {
 
   constructor(Model) {
     this.Model = Model;
+    this.transactionsToRedo;
   }
 
   async loadTableToDatabase(table) {
@@ -17,8 +18,8 @@ export class DBService {
   }
 
   async redo(logs) {
-    let transactions = this.getValidTransactions(logs);
-    const operations = this.getOperations(transactions)
+    this.getValidTransactions(logs);
+    const operations = this.getOperations()
    
     for (const operation of operations) {
       await this.insert(operation)
@@ -26,9 +27,9 @@ export class DBService {
   }
 
   getValidTransactions(logs) {
+    let startCheckpoint = false;
     let endCheckpoint;
     let transactionsPending = new Set();
-    let startCheckpoint = false;
     const transactionList = {};
 
     for (const item of logs) {
@@ -42,12 +43,12 @@ export class DBService {
         continue;
       }
 
-      if (item.includes('End Checkpoint')) {
+      if (item.includes('End Checkpoint') || item.includes('End CKPT')) {
         endCheckpoint = true;
         continue;
       }
 
-      if (item.includes('Start Checkpoint')) {
+      if (item.includes('Start Checkpoint') || item.includes('Start CKPT')) {
         if (endCheckpoint) {
           const transactions = item.match(/T\d/g);
           if (!transactions) break;
@@ -74,10 +75,34 @@ export class DBService {
       }
     }
 
-    return transactionList
+    this.transactionsToRedo = transactionList;
   }
 
-  getOperations(transactions) {
+  willItBeRedo() {
+    for (const transaction in this.transactionsToRedo) {
+      console.log(`Transação ${transaction} realizou Redo`);
+    }    
+  }
+
+  doNotWillBeRedo(logs) {
+    const arr = []
+    for (const transaction in this.transactionsToRedo) {
+      arr.push(transaction)
+    }
+    
+    for (const log of logs) {
+      if (log.includes('start')) {
+        const [transaction] = log.match(/T\d/);
+        if (!arr.includes(transaction)) {
+          console.log(`Transação ${transaction} não realizou Redo`);
+        }
+      }
+    }
+  }
+
+  getOperations() {
+    let transactions = this.transactionsToRedo;
+
     transactions = Object.entries(transactions);
     transactions.reverse();
 

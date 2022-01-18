@@ -9,7 +9,7 @@ import { DBService } from './db-service.js';
 class App {
 
   constructor() {
-    this.fileInBuffer = readFileSync('file.txt');
+    this.fileInBuffer = readFileSync(process.env.LOG_FILE_NAME);
     this.file = new File(this.fileInBuffer);
     this.dbService = new DBService(Model);
   }
@@ -18,7 +18,9 @@ class App {
     await database.sync();
     await this.dbService.loadTableToDatabase(this.file.table);
     await this.dbService.redo(this.file.logs);
-    await this.dbService.finalPrint()
+    this.dbService.willItBeRedo();
+    this.dbService.doNotWillBeRedo(this.file.logs);
+    await this.dbService.finalPrint();
   }
 }
 
