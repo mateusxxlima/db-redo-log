@@ -4,6 +4,10 @@ Project to create a redo script, which reads a log file and do a "redo" in a dat
 
 This project is implemented in NodeJS
 
+## What Is the Redo Log?
+
+The most crucial structure for recovery operations is the redo log, which consists of two or more preallocated files that store all changes made to the database as they occur.
+
 ## Executing the project   
 ### Before running the code:
 
